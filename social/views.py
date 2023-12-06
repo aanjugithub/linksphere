@@ -11,7 +11,7 @@ class SignUpView(CreateView):
     form_class=RegistrationForm
 
     def get_success_url(self) -> str:
-        return reverse("signup")
+        return reverse("signin")
 
 class SignInView(FormView):
     template_name="login.html"
