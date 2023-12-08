@@ -12,6 +12,7 @@
     {%if request.user.profile%}
         <a href="{%url 'profile-update' request.user.profile.id %}">Add Profile</a> <!--request.user.profile.id  will give userprofile id ,profile is the related name of userprofilr model. check modls.py line no13-->
         <a href="{%url 'profile-details' request.user.profile.id %}">View Profile</a>
+        <a href="{%url 'profile-list' %}">All Profiles</a>
     {%endif%}
 </body>
 </html>

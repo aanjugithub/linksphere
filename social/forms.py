@@ -16,5 +16,11 @@ class LoginForm(forms.Form):   #inherit from forms
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
+        
         model=UserProfile
         exclude=("user","following","block")
+        #for date picker
+        widgets={
+                 "dob":forms.DateInput(attrs={"class":"form-control","type":"date"})
+
+        }

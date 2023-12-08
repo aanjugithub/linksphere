@@ -54,4 +54,8 @@ class ProfileDetailView(DetailView):
     model=UserProfile
     context_object_name="data"
 
+class ProfileListView(View):
+    def get(self,request,*args,**kwargs):
+        qs=UserProfile.objects.all()
+        return render(request,"profile_list.html",{"data":qs})
 

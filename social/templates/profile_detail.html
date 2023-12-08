@@ -16,7 +16,9 @@
                 <div class="col-lg-6">
                     <div class="about-text go-to">
                         <h3 class="dark-color">{{data}}</h3>
-                        <a class="text-decoration-none btn" href="profile_edit.html">Edit profile</a>
+                        {%if data.user == request.user%}
+                            <a class="text-decoration-none btn" href="profile_edit.html">Edit profile</a>
+                        {%endif%}
                         <p>Bio: {{data.bio}}</p>
                         <div class="row about-list">
                             <div class="col-md-6">
