@@ -27,6 +27,9 @@
             <img src="{%static 'social/images/logo.png' %}" alt="" style="height: 100px;width: 200px;">
           </div>
           <!-- =========== form starts =========== -->
+        {%if form.errors%}
+          {{form.errors}}
+        {%endif%}
           <form action="" method="post">
             {%csrf_token%}
             <div class="input-group mt-4">
