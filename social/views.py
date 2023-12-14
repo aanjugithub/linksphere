@@ -1,10 +1,12 @@
+from django.forms.models import BaseModelForm
+from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from django.urls import reverse
 
-from django.views.generic import FormView,CreateView,TemplateView,View,UpdateView,DetailView
-from social.forms import RegistrationForm,LoginForm,UserProfileForm
+from django.views.generic import FormView,CreateView,TemplateView,View,UpdateView,DetailView,ListView
+from social.forms import RegistrationForm,LoginForm,UserProfileForm,PostForm,CommentForm
 from django.contrib.auth import authenticate,login,logout
-from social.models import UserProfile
+from social.models import UserProfile,Posts,Comments
 # Create your views here.
 
 class SignUpView(CreateView):
@@ -33,8 +35,22 @@ class SignInView(FormView):
         return render(request,"login.html",{"form":form}) 
 
 
-class IndexView(TemplateView):
+class IndexView(CreateView,ListView):
     template_name="index.html"
+     #create and list post view in the index page
+    form_class=PostForm
+    model=Posts
+    context_object_name="data"
+
+    def form_valid(self, form) :
+        #form.instance ponits to postform user
+        form.instance.user=self.request.user
+        return super().form_valid(form)
+  
+    #after create sucessfully, the url needs to redirect to another view.so below fun implimented
+    def get_success_url(self) -> str:
+        return reverse("index")
+
 
 class SignOutView(View):
     def get(self,request,*args,**kwargs):
@@ -56,6 +72,54 @@ class ProfileDetailView(DetailView):
 
 class ProfileListView(View):
     def get(self,request,*args,**kwargs):
-        qs=UserProfile.objects.all()
+        qs=UserProfile.objects.all().exclude(user=request.user) #exclude will remove the loggedin user
         return render(request,"profile_list.html",{"data":qs})
+    
 
+#follow url 
+class FollowView(View):
+    def post(self,request,*args,**kwargs):
+        #print(request.POST)
+        id=kwargs.get("pk")
+        profile_object=UserProfile.objects.get(id=id)
+        action=request.POST.get("action")
+        if action == "follow":
+            request.user.profile.following.add(profile_object) #add following userprofile to req .user
+        elif action=="unfollow":
+            request.user.profile.following.remove(profile_object)#remove following userprofile to req .user
+        return redirect("index")
+
+
+
+class PostLikeView(View):
+    def post(self,request,*args,**kwargs):
+        id=kwargs.get("pk")
+        post_object=Posts.objects.get(id=id)
+        action=request.POST.get("action")
+        print(action)
+        if action == "like":
+            post_object.liked_by.add(request.user)
+
+        elif action == "dislike":
+            post_object.liked_by.remove(request.user)
+        
+        return redirect("index")
+    
+class CommentView(CreateView): #comment is gona create so create view
+    template_name="index.html"
+    form_class=CommentForm #which form class is gona render
+
+    def get_success_url(self) -> str:
+        return reverse("index")
+    
+    def form_valid(self, form) :
+        #form.instance ponits to postform user
+        id=self.kwargs.get("pk")
+        post_object=Posts.objects.get(id=id)
+        form.instance.user=self.request.user
+        form.instance.post=post_object
+        return super().form_valid(form)
+        
+         
+
+        

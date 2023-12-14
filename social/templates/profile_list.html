@@ -47,8 +47,17 @@ background: linear-gradient(to right, #FF4B2B, #FF416C);">
                      
                     </ul>
                     <div class="card-body">
-                      <a href="#" class="card-link">follow</a>
-                      <a href="#" class="card-link">unfollow</a>
+                     
+                     <form action="{%url 'follow' profile.id %}" method="post">
+                      {%csrf_token%}
+                      {%if profile in request.user.profile.following.all %} <!-- if condition check -logged in user(request.user.prof.follo) profile following list check (pro variable hold the follwer)-->
+                         <button type="submit" name="action" value="unfollow">unfollow</button>
+                      {%else%}
+                        <button type="submit" name="action" value="follow">follow</button>
+                      {%endif%}
+                      
+
+                     </form>
                     </div>
                   </div>
             </div>

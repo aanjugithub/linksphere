@@ -16,6 +16,7 @@
                 <div class="col-lg-6">
                     <div class="about-text go-to">
                         <h3 class="dark-color">{{data}}</h3>
+                        
                         {%if data.user == request.user%}
                             <a class="text-decoration-none btn" href="{%url 'profile-update' data.id %}">Edit profile</a>
                         {%endif%}

@@ -12,7 +12,7 @@ body{
  .icon{
      position: absolute;
      padding: 9px;
-    border: 1px solid black;
+    border: 1px solid rgb(49, 39, 39);
     /* background-color: rgb(210, 206, 206); */
     width: 35PX;
  
