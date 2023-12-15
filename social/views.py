@@ -1,3 +1,5 @@
+from typing import Any
+from django.db import models
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
@@ -50,6 +52,11 @@ class IndexView(CreateView,ListView):
     #after create sucessfully, the url needs to redirect to another view.so below fun implimented
     def get_success_url(self) -> str:
         return reverse("index")
+    
+    #to sort post in decending order()
+    def get_queryset(self):
+        qs=Posts.objects.order_by("-created_date")
+        return qs
 
 
 class SignOutView(View):
@@ -119,6 +126,21 @@ class CommentView(CreateView): #comment is gona create so create view
         form.instance.user=self.request.user
         form.instance.post=post_object
         return super().form_valid(form)
+
+#localhost:8000/profile/<int:pk>/block
+
+class ProfileBlockView(View):
+    def post(self,request,*args,**kwargs):
+        id=kwargs.get("id")
+        #take the  profile wana block ,take pro obj
+        profile_object=UserProfile.get(id=id)
+        action=request.POST.get("action")
+        if action == "block":
+            request.user.profile.block.add(profile_object) #request.user.profile will give the logined user
+        elif action=="unblock":
+            request.user.profile.block.remove(profile_object)
+        
+        return redirect("index")
         
          
 
