@@ -51,7 +51,17 @@ class Stories(models.Model):
     created_date=models.DateTimeField(auto_now_add=True)
     #exp=created_date + timezone.timedelta(days=1)
     expiry_date=models.DateTimeField()
+
+    def __str__(self):
+        return self.title
     
+    def save(self,*args,**kwargs):
+        if not self.expiry_date:
+            self.expiry_date=timezone.now()+timezone.timedelta(days=1)
+        super().save(*args,**kwargs)
+    
+    #migration cmds run only there is a change in db (attributes) for a new method impl no need eg- no need of such cmds for above defr
+
 
     def __str__(self):
         return self.title

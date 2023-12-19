@@ -32,6 +32,7 @@ urlpatterns = [
     path('profile/<int:pk>/follow',views.FollowView.as_view(),name='follow'),
     path('post/<int:pk>/like',views.PostLikeView.as_view(),name="like"),
     path('post/<int:pk>/comments/add',views.CommentView.as_view(),name="comment"),
-    path('profile/<int:pk>/block',views.ProfileBlockView.as_view(),name="block")
+    path('profile/<int:pk>/block',views.ProfileBlockView.as_view(),name="block"),
+    path('story/add',views.StoriesCreateView.as_view(),name="story-create"),
 
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

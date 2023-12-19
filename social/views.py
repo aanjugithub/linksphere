@@ -6,9 +6,10 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 
 from django.views.generic import FormView,CreateView,TemplateView,View,UpdateView,DetailView,ListView
-from social.forms import RegistrationForm,LoginForm,UserProfileForm,PostForm,CommentForm
+from social.forms import RegistrationForm,LoginForm,UserProfileForm,PostForm,CommentForm,StoryForm
 from django.contrib.auth import authenticate,login,logout
-from social.models import UserProfile,Posts,Comments
+from social.models import UserProfile,Posts,Comments,Stories
+from django.utils import timezone
 # Create your views here.
 
 class SignUpView(CreateView):
@@ -55,8 +56,19 @@ class IndexView(CreateView,ListView):
     
     #to sort post in decending order()
     def get_queryset(self):
-        qs=Posts.objects.order_by("-created_date")
+
+        blocked_profile=self.request.user.profile.block.all()
+        blockedprofile_id=[pr.user.id for pr in blocked_profile]
+        print(blockedprofile_id)
+
+        qs=Posts.objects.exclude(user__id__in=blockedprofile_id).order_by("-created_date")
         return qs
+    
+    #this method is used to override to pass additional data to html side
+    def get_context_data(self, **kwargs): 
+        context=super().get_context_data(**kwargs)
+        context["stories"]=Stories.objects.all()  #list stories
+        return context
 
 
 class SignOutView(View):
@@ -131,16 +143,31 @@ class CommentView(CreateView): #comment is gona create so create view
 
 class ProfileBlockView(View):
     def post(self,request,*args,**kwargs):
-        id=kwargs.get("id")
+        id=kwargs.get("pk")
         #take the  profile wana block ,take pro obj
-        profile_object=UserProfile.get(id=id)
+        profile_object=UserProfile.objects.get(id=id)
         action=request.POST.get("action")
+        print(action)
         if action == "block":
             request.user.profile.block.add(profile_object) #request.user.profile will give the logined user
         elif action=="unblock":
             request.user.profile.block.remove(profile_object)
         
         return redirect("index")
+    
+class StoriesCreateView(View):
+    def post(self,request,*args,**kwargs):
+        form=StoryForm(request.POST,files=request.FILES)
+        if form.is_valid():
+            form.instance.user=request.user
+            form.save()
+            return redirect("index")
+        return redirect("index")
+    
+
+    
+
+
         
          
 
