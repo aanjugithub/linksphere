@@ -82,6 +82,26 @@
     </nav>
         
     <!-- nav ends -->
+       <!--stories start-->
+
+       <div class="d-flex  container w-50 mt-5">
+        {%for st in stories%}
+        <div class="mt-5">
+            <div class="d-flex flex-column">
+                <article class="border rounded-circle bg-danger text-white  me-2 d-flex align-items-center justify-content-center" style="height: 100px;width: 100px; ">
+                   
+                    {%if st.post_image%}
+                        <img src="{{st.post_image.url}}" alt=""  style="width: 100px; height: 100px;" class="border rounded-circle">
+                    {%endif%}
+                   
+                </article>
+                <div class="text-center fw-bolder">{{st.user}}</div>
+            </div>
+        </div>
+        {%endfor%}
+    </div>
+
+    <!--stories end-->
     
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -149,11 +169,7 @@
                 </div>
             </div>
         </form>
-        <!--stories start-->
-
-        {{stories}}
-        
-        <!--stories end-->
+     
 
 
         <!-- post section start -->
